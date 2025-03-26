@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 2
+names: ['with_helmet', 'without_helmet']
+
+roboflow:
+  workspace: programa-delfn
+  project: helmet-no-helmet-detection-hjdvx
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/programa-delfn/helmet-no-helmet-detection-hjdvx/dataset/1
