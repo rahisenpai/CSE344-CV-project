@@ -1,0 +1,8 @@
+**/datasets
+
+**/.DS_Store
+**/__pycache__
+
+**/*.pt
+**/*.pth
+**/*.pkl
