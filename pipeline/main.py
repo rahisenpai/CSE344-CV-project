@@ -2,20 +2,15 @@
 from ultralytics import YOLO
 import cv2
 import numpy as np
-from sort.sort import *
+from .sort.sort import *
 import easyocr
 
 reader = easyocr.Reader(['en']) # Initialize the OCR reader
-vehicle_detector_model = YOLO('helmet-violation-detector-YOLOv8m.pt')
-license_plate_detector_model = YOLO('license_plate_detector-YOLOv8n.pt')
+vehicle_detector_model = YOLO('pipeline/helmet-violation-detector-YOLOv8m.pt')
+license_plate_detector_model = YOLO('pipeline/license_plate_detector-YOLOv8n.pt')
 
-video = cv2.VideoCapture('input.mp4')
-fps = video.get(cv2.CAP_PROP_FPS)
-print(f"Frames per second: {fps}")
-vehicle_tracker = Sort() #object tracker used to track the vehicles in motion
 vehicle_ids = [1] #without_helmet
 detection_threshold = 0.1
-results = {}
 
 def detect_vehicles(frame):
     vehicle_detections = []
@@ -92,7 +87,14 @@ def write_csv(results, output_path):
                             f"{lp_data['bbox_score']},{lp_data['text']},{lp_data['text_score']}\n")
 
 
-def process_video(video, vehicle_tracker):
+def process_video(video_path: str, output_csv_path='results.csv'):
+
+    video = cv2.VideoCapture(video_path)
+    fps = video.get(cv2.CAP_PROP_FPS)
+    print(f"Frames per second: {fps}")
+    vehicle_tracker = Sort() #object tracker used to track the vehicles in motion
+    results = {}
+
     ret = True   # ret = True implies that more frames in the video are left.
     frame_no = -1
 
@@ -127,6 +129,7 @@ def process_video(video, vehicle_tracker):
                                                                         'bbox_score': conf_score_license,
                                                                         'text_score': license_plate_score}}
 
-    write_csv(results, 'results.csv')
+    write_csv(results, output_csv_path)
+    return output_csv_path
 
-process_video(video, vehicle_tracker)
+# process_video(video, vehicle_tracker)

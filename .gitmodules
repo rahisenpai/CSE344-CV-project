@@ -1,0 +1,3 @@
+[submodule "pipeline/sort"]
+	path = pipeline/sort
+	url = https://github.com/abewley/sort.git

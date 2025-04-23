@@ -1,4 +1,8 @@
 import streamlit as st
+import tempfile
+from pipeline.main import process_video
+import os
+os.environ["STREAMLIT_WATCH_FILE_SYSTEM"] = "false"
 
 # Custom CSS with dark traffic-inspired theme
 def set_custom_style():
@@ -102,7 +106,24 @@ def main():
         
         # Detection button with traffic signal styling
         if st.button("🚨 Start Detection"):
-            st.info("🚧 Detection functionality will be implemented soon")
+            # st.info("🚧 Detection functionality will be implemented soon")
+            with st.spinner("Processing video..."):
+                # Save to temp file
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+                temp_file.write(uploaded_file.read())
+                temp_file.close()
+
+                # Run detection
+                csv_output = process_video(temp_file.name)
+
+                st.success("Detection complete!")
+                st.download_button(
+                    label="📥 Download CSV",
+                    data=open(csv_output, "rb"),
+                    file_name="detection_results.csv",
+                    mime="text/csv"
+                )
+                os.remove(temp_file.name)
 
 if __name__ == "__main__":
     main()
